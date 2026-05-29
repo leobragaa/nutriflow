@@ -1,0 +1,129 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                Int             @id @default(autoincrement())
+  nome              String
+  email             String          @unique
+  senha             String
+  tipo              String
+  senhaTemporaria   Boolean         @default(true)
+  primeiroAcesso    Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  nutricionista     Nutricionista?
+  paciente          Paciente?
+  administrador     Administrador?
+  notificacoes      Notificacao[]
+  mensagensEnviadas Mensagem[]      @relation("Remetente")
+  mensagensRecebidas Mensagem[]      @relation("Destinatario")
+}
+model Nutricionista {
+  id Int @id @default(autoincrement())
+  cro String
+  especialidade String
+  usuarioId Int @unique
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  paciente Paciente[]
+  planos PlanoAlimentar[]
+  evolucoes Evolucao[]
+  relatorio Relatorio[]
+}
+model Paciente {
+  id Int @id @default(autoincrement())
+  peso            Float
+  altura          Float
+  dataNasc        DateTime
+  objetivo        String
+  alergias        String?
+  patologias      String?
+  usuarioId       Int              @unique
+  nutricionistaId Int
+  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
+  nutricionista   Nutricionista    @relation(fields: [nutricionistaId], references: [id])
+  planos          PlanoAlimentar[]
+  evolucoes       Evolucao[]
+  relatorios      Relatorio[]
+}
+model Administrador {
+  id Int @id @default(autoincrement())
+  nivel String @default("admin")
+  usuarioId Int @unique
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+}
+model PlanoAlimentar {
+  id Int @id @default(autoincrement())
+  descricao String
+  objetivo String
+  calorias Int
+  dataCriacao DateTime @default(now())
+  nutricionistaId Int
+  pacienteId Int
+  nutricionista Nutricionista @relation(fields: [nutricionistaId], references: [id])
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+  refeicoes Refeicao[]
+}
+model Refeicao {
+  id Int @id @default(autoincrement())
+  nome      String
+  horario   String
+  alimentos String
+  substituicoes String?
+  planoId Int
+  plano   PlanoAlimentar @relation(fields: [planoId], references: [id])
+}
+model Evolucao {
+  id Int @id @default(autoincrement())
+  data DateTime @default(now())
+  peso Float
+  abdomen Float?
+  quadril Float?
+  braco Float?
+  observacoes String?
+  pacienteId Int
+  nutricionistaId Int
+  nutricionista Nutricionista @relation(fields: [nutricionistaId], references: [id])
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+}
+model Mensagem {
+  id Int @id @default(autoincrement())
+  conteudo String 
+  tipo String @default("texto")
+  dataEnvio DateTime @default(now())
+  lida Boolean @default(false)
+  remetenteId Int
+  destinatarioId Int
+  remetente Usuario @relation("Remetente", fields: [remetenteId], references: [id])
+  destinatario Usuario @relation("Destinatario", fields: [destinatarioId], references: [id])
+  notificacoes Notificacao[]  
+}
+model Notificacao {
+  id Int @id @default(autoincrement())
+  conteudo String
+  lida Boolean @default(false)
+  dataEnvio DateTime @default(now())
+  usuarioId Int
+  mensagensId Int
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  mensagens Mensagem @relation(fields: [mensagensId], references: [id])
+}
+model Relatorio {
+  id Int @id @default(autoincrement())
+  tipo String
+  dataGeracao DateTime @default(now())
+  filtro String
+  nutricionistaId Int
+  pacienteId Int
+  nutricionista Nutricionista @relation(fields: [nutricionistaId], references: [id])
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+}
