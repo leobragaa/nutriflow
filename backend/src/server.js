@@ -3,6 +3,7 @@ const cors = require('cors')
 const {Server} = require('socket.io')
 const http = require('http')
 const dotenv = require('dotenv')
+const path = require('path')
 
 dotenv.config()
 
@@ -17,7 +18,7 @@ const io = new Server(server, {
 
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.static(path.join(__dirname, '../../frontend')))
 
 const authRoutes = require('./routes/Rotas')
 const usuarioRoutes = require('./routes/UsuarioRoutes')
@@ -27,15 +28,26 @@ const nutricionistaRoutes = require('./routes/NutricionistaRoute')
 app.use('/api/auth', authRoutes)
 app.use('/api/usuarios', usuarioRoutes)
 app.use('/api/pacientes', pacienteRoutes)
-app.use('/api/nutricionistas', nutricionistaRoutes)
+app.use('/api/nutricionistas/verificar-crn', nutricionistaRoutes)
 
 app.get('/', (req, res) => {
-    res.json({mensagem: 'NutriFlow Funcionando!'})
+    res.sendFile(path.join(__dirname, '../../frontend/pages/telaIncial.html'))
+})
+
+app.get('/:pagina', (req, res) => {
+    const pageName = req.params.pagina
+    const fileCaminho = path.join(__dirname, `../../frontend/pages/${pageName}.html`)
+
+    res.sendFile(fileCaminho, (err)=>{
+        if(err){
+            res.status(404).send('Pagina não Encontrado')
+        }
+    })
 })
 
 io.on('connection', (socket) =>{
-    console.log('Usuario Conectado: ',socket.io)
-    socket.io('enviarMensagem', (dados) =>{
+    console.log('Usuario Conectado: ',socket.id)
+    socket.on('enviarMensagem', (dados) =>{
         io.emit('receberMensagem', dados)
     })
     socket.on('disconnect', () => {

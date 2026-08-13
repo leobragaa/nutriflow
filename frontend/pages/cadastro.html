@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Cadastro - NutriFlow </title>
+    <link rel="stylesheet" href="/css/cadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+    <div class="left"> 
+        <div class="circle-tl"></div>
+        <div class="circle-br"></div>
+
+        <img src="../assents/images/NutriFlow.png" alt="NutriFlow" class="logo-center">
+
+        <div>
+            <span class="logo-nutri"> Nutri </span><span class="logo-flow"> Flow </span>
+            <div class="logo-tagline"> Nutrição ° Performance ° Equilíbrio </div>
+        </div>
+
+        <div class="benefits">
+            <div class="benefit">     
+                <span class="benefit-icon">
+                   <i class="fa-solid"> 📋 </i>
+                </span> 
+                Planos Alimentares Personalizados 
+            </div>
+
+            <div class="benefit"> 
+                <span class="benefit-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </span>                
+                Acompanhamento de Evolução 
+            </div>
+
+            <div class="benefit"> 
+                <span class="benefit-icon">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                Dados Protegidos 
+            </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="card">
+            <div class="card-logo">
+                <img src="../assents/images/NutriFlow.png" alt="">
+            </div>
+        
+            <div class="card-title"> Crie sua Conta </div>
+            <div class="card-subtitle"> no <strong>Nutri <span>Flow</span></strong></div>
+
+            <span class="tipo-label"> Cadastra-se como: </span>
+
+            <div class="tipo-btns">
+                <div class="tipo-btn active" onclick="setTipo('nutricionista', this)">
+                    <span class="ico"> <strong> Nutricionista </strong> </span> 
+                </div> 
+                <div class="tipo-btn" onclick="setTipo('paciente', this)">
+                    <span class="ico"> <strong> Paciente </strong> </span> 
+                </div> 
+            </div>
+
+            <div class="form-group">
+                <label> Nome Completo </label>
+                <input class="form-control" type="text" id="nome" placeholder="Nome Completo">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label> E-mail </label>
+                    <input class="form-control" type="email" id="email" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label> Telefone </label>
+                    <input class="form-control" type="tel" id="telefone" maxlength="15" placeholder="(55) 99999-9999">
+                </div>
+            </div>
+            <div id="campos-crn">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label> CRN </label>
+                        <input class="form-control" type="text" id="crn" placeholder="CRN1">
+                    </div>
+                    <div class="form-group">
+                        <label> Estado </label>
+                        <input class="form-control" type="text" id="estado" placeholder="MS">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="info-box" id="info-box"> 
+                <strong>  Nutricionista: </strong> após o cadastro você poderá adicionar paciente e gerenciar seus planos alimentares.
+            </div>
+
+            <label class="terms-row">
+                <input type="checkbox" id="termos"> Concordo com os <a> Termos de uso </a>
+            </label>
+
+            <button class="btn-cadastrar" onclick="cadastrar()"> Criar Conta </button>
+
+            <div class="result"> Já tem Conta? <a href="/login">Faça login</a></div>
+
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        let tipoSelecionado = 'nutricionista'
+
+        function setTipo(tipo, btn){
+            tipoSelecionado = tipo
+
+            document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'))
+            btn.classList.add('active')
+
+            const camposCRN = document.getElementById('campos-crn');
+
+            if(tipo === 'nutricionista'){
+                camposCRN.style.display = 'block'
+            }else{
+                camposCRN.style.display = 'none'
+            }
+
+            const info = document.getElementById('info-box')
+
+            const msgs = {
+                nutricionista: '<strong> Nutricionista: </strong> após o cadastro você poderá adicionar pacientes e gerenciar seus planos alimentares',
+                paciente: '<strong> Paciente: </strong> seu acessso será vinculado ao seu nutricionista. que enviará seu plano e acompanhará sua evolução'
+            }
+
+            info.innerHTML = msgs[tipo]
+        }
+
+        function mostrarResultado(tipo, mensagem){
+            const el = document.getElementById('result')
+            el.className = "result " + tipo
+            el.textContent = mensagem
+        }
+
+        function emailValido(email){
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+            return regex.test(email)
+
+        }
+
+        const telefone = document.getElementById("telefone");
+
+        telefone.addEventListener("input", (e) => {
+            let valor = e.target.value.replace(/\D/g, "")
+
+            valor = valor.substring(0, 11)
+
+            if(valor.length > 10){
+                valor = valor.replace(
+                    /^(\d{2})(\d{5})(\d{4})$/,
+
+                    "($1) $2-$3"
+                );
+            }else{
+                valor = valor.replace(
+                    /^(\d{2})(\d{5})(\d{0,4})$/,
+                    "($1) $2-$3"
+                );
+            }
+            e.target.value = valor;
+        })
+        
+        document.addEventListener('keydown', (e) => {
+            if(e.key  === 'Enter'){
+              cadastrar()  
+            } 
+        })
+
+        async function cadastrar() {
+            const nome = document.getElementById('nome').value.trim()
+            const email = document.getElementById('email').value.trim()
+            const termos = document.getElementById('termos').checked
+
+            if(!nome){ mostrarResultado('error', 'Preencha o nome Completo'); return}
+            if(!email){ mostrarResultado('error', 'Preencha o e-mail'); return}
+            if(!termos){ mostrarResultado('error', 'Aceite os termos de uso'); return}
+
+            if(!emailValido(email)){
+                mostrarResultado(
+                    "erro",
+                    "Digite um e-mail válido."
+                );
+                return;
+            }
+            mostrarResultado('loading', 'Criando sua Conta...')
+
+            try{
+                const resposta = await fetch("/api/nutricionista/verificar-crn", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        nome,
+                        registro,
+                        crn
+                    })
+                })
+            }catch{
+                mostrarResultado('error', 'Erro de Conexão com o servidor')
+            }
+            
+            try{
+                const res = await fetch('/api/usuarios',{
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({nome, email, tipo: tipoSelecionado})
+                })
+
+                const data = await res.json()
+
+                if(res.ok){
+                    mostrarResultado('success', 'Conta Criada ! Verifique seu Email para obter a senha de acesso')
+                }else{
+                    mostrarResultado('error', '' + (data.erro || 'Erro ao criar Conta'))
+                }
+            }catch(err){
+                mostrarResultado('error', 'Erro de Conexão com o servidor')
+            }
+
+        }
+
+    </script>
+</body>
+</html>

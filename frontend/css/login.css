@@ -1,0 +1,469 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+:root{
+    --green:#62884c;
+    --green-dark:#4d6f3d;
+    --green-light:#E8F0E0;
+    --orange:#E8784A;
+    --orange-dark:#d66c3f;
+    --cream:#F5F0E8;
+    --text:#2C3E22;
+    --border:#D9D9D9;
+    --white:#FFFFFF;
+}
+
+html{
+    font-size:16px;
+}
+
+body{
+    display:flex;
+    min-height:100vh;
+    background:var(--cream);
+    color:var(--text);
+}
+
+/*======================
+    LADO ESQUERDO
+======================*/
+
+.left{
+    width:40%;
+    background:var(--green);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+    padding:40px;
+    text-align:center;
+}
+
+.circle-tl{
+    position:absolute;
+    width:320px;
+    height:320px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    top:-120px;
+    left:-120px;
+}
+
+.circle-br{
+    position:absolute;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    right:-100px;
+    bottom:-100px;
+}
+
+.logo-center{
+    width:280px;
+    max-width:80%;
+    margin-bottom:25px;
+    z-index:2;
+}
+
+.logo-nutri{
+    color:#fff;
+    font-size:3rem;
+    font-weight:700;
+}
+
+.logo-flow{
+    color:var(--orange);
+    font-size:3rem;
+    font-weight:700;
+    font-style:italic;
+}
+
+.logo-tagline{
+    margin-top:10px;
+    color:rgba(255,255,255,.75);
+    font-size:.85rem;
+    letter-spacing:2px;
+    text-transform:uppercase;
+}
+
+.benefits{
+    margin-top:40px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    width:320px;
+    max-width:100%;
+    z-index:2;
+}
+
+.benefit{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    color:#fff;
+    font-size:15px;
+    text-align:left;
+}
+
+.benefit-icon{
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    background:rgba(255,255,255,.15);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-shrink:0;
+    font-size:18px;
+}
+
+/*======================
+    LADO DIREITO
+======================*/
+
+.right{
+    flex:1;
+    background:var(--cream);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.card{
+    width:100%;
+    max-width:480px;
+    background:var(--white);
+    border-radius:20px;
+    padding:40px;
+}
+
+.card-logo{
+    width:80px;
+    height:80px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:var(--green-light);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card-logo img{
+    width:60px;
+}
+
+.card-title{
+    font-size:30px;
+    font-weight:bold;
+    text-align:center;
+    color:var(--text);
+}
+
+.card-subtitle{
+    text-align:center;
+    font-size:20px;
+    margin-bottom:25px;
+}
+
+.card-subtitle strong{
+    color:var(--green);
+}
+
+.card-subtitle span{
+    color:var(--orange);
+}
+
+/*======================
+    TIPO DE USUÁRIO
+======================*/
+
+.tipo-label{
+    display:block;
+    margin-bottom:12px;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.tipo-btns{
+    display:flex;
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.tipo-btn{
+    flex:1;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+    text-align:center;
+    background:#fff;
+}
+
+.tipo-btn:hover{
+    border-color:var(--green);
+}
+
+.tipo-btn.active{
+    background:var(--green-light);
+    border-color:var(--green);
+    color:var(--green);
+}
+
+/*======================
+    FORMULÁRIO
+======================*/
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-row{
+    display:flex;
+    gap:15px;
+}
+
+.form-row .form-group{
+    flex:1;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.form-control,
+input[type="email"],
+input[type="password"],
+input[type="text"]{
+    width:100%;
+    padding:13px 15px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    transition:.2s;
+}
+
+.form-control:focus,
+input:focus{
+    border-color:var(--green);
+}
+
+.info-box{
+    background:var(--green-light);
+    border-left:4px solid var(--green);
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.info-box strong{
+    color:var(--green);
+}
+
+.terms-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.terms-row input{
+    width:16px;
+    height:16px;
+}
+
+.terms-row a{
+    color:var(--green);
+    text-decoration:none;
+}
+
+.btn,
+.btn-cadastrar{
+    width:100%;
+    padding:15px;
+    background:var(--orange);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn:hover,
+.btn-cadastrar:hover{
+    background:var(--orange-dark);
+}
+
+.result{
+    margin-top:20px;
+    text-align:center;
+    font-size:14px;
+}
+
+.result a{
+    color:var(--green);
+    font-weight:bold;
+    text-decoration:none;
+}
+
+/*======================
+    RESPONSIVO
+======================*/
+
+@media(max-width:1200px){
+
+    .left{
+        width:45%;
+    }
+
+    .logo-center{
+        width:220px;
+    }
+
+    .logo-nutri,
+    .logo-flow{
+        font-size:40px;
+    }
+
+}
+
+@media(max-width:900px){
+
+    body{
+        flex-direction:column;
+    }
+
+    .left{
+        width:100%;
+        min-height:350px;
+        padding:30px;
+    }
+
+    .right{
+        width:100%;
+        padding:25px;
+    }
+
+    .card{
+        max-width:600px;
+        padding:30px;
+    }
+
+    .benefits{
+        margin-top:30px;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .card{
+        padding:25px;
+    }
+
+    .tipo-btns{
+        flex-direction:column;
+    }
+
+    .form-row{
+        flex-direction:column;
+        gap:0;
+    }
+
+    .logo-center{
+        width:180px;
+    }
+
+    .logo-nutri,
+    .logo-flow{
+        font-size:34px;
+    }
+
+}
+
+@media(max-width:480px){
+
+    .left{
+        min-height:300px;
+        padding:20px;
+    }
+
+    .logo-center{
+        width:150px;
+    }
+
+    .logo-nutri,
+    .logo-flow{
+        font-size:28px;
+    }
+
+    .logo-tagline{
+        font-size:11px;
+        letter-spacing:1px;
+    }
+
+    .benefits{
+        width:100%;
+        gap:12px;
+    }
+
+    .benefit{
+        font-size:13px;
+    }
+
+    .benefit-icon{
+        width:34px;
+        height:34px;
+        font-size:15px;
+    }
+
+    .card{
+        padding:20px;
+        border-radius:16px;
+    }
+
+    .card-logo{
+        width:65px;
+        height:65px;
+    }
+
+    .card-logo img{
+        width:45px;
+    }
+
+    .card-title{
+        font-size:24px;
+    }
+
+    .card-subtitle{
+        font-size:17px;
+    }
+
+    .btn,
+    .btn-cadastrar{
+        font-size:15px;
+        padding:14px;
+    }
+
+}

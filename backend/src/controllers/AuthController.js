@@ -1,5 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
-const brcypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 
@@ -15,7 +15,7 @@ const login = async (req, res) => {
             return res.status(404).json({erro: 'Usuario não foi possivel encontar'})
         }
 
-        const senhaValida = await brcypt.compare (senha, usuari.senha)
+        const senhaValida = await bcrypt.compare (senha, usuario.senha)
 
         if(!senhaValida){
             return res.status(401).json({erro: 'Senha incorreta'})
@@ -23,6 +23,17 @@ const login = async (req, res) => {
 
         const token = jwt.sign({id: usuario.id, tipo: usuario.tipo}, process.env.JWT_SECRET, { expiresIn: '8h'})
 
+        return res.status(200).json({
+            mensagem: 'Login Realizado com Sucesso',
+            token,
+            usuario:{
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                tipo: usuario.tipo,
+                primeiroAcesso: usuario.primeiroAcesso
+            }
+        })
     }catch(error){
         return res.status(500).json({erro: 'Erro interno no sistema', detalhe: error.message})
     }
@@ -35,15 +46,17 @@ const logout = async (req, res) => {
 const alterarSenha = async (req, res) => {
     try{
         const {id} = req.usuario
-        const {senha, senhaNova} = req.body
+        const {senhaAtual, senhaNova} = req.body
 
         const usuario = await prisma.usuario.findUnique({where: {id}})
 
+        const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha)
+   
         if(!senhaValida){
             return res.status(401).json({erro: 'Senha Atual Incorreta'})
         }
 
-        const senhaCriptografada = await brcypt.hash(novaSenha, 10)
+        const senhaCriptografada = await bcrypt.hash(senhaNova, 10)
 
         await prisma.usuario.update({
             where: {id},
@@ -72,7 +85,7 @@ const recuperarSenha = async (req, res) => {
 
         const novaSenha = Math.random().toString(36).slice(-8)
 
-        const senhaCriptografada = await brcypt.hash(novaSenha, 10)
+        const senhaCriptografada = await bcrypt.hash(novaSenha, 10)
 
         await prisma.usuario.update({
             where: {email},

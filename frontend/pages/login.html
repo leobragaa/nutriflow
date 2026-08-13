@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Login - NutriFlow </title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="left"> 
+        <div class="circle-tl"></div>
+        <div class="circle-br"></div>
+
+        <img src="../assents/images/NutriFlow.png" alt="NutriFlow" class="logo-center">
+
+        <div>
+            <span class="logo-nutri"> Nutri </span><span class="logo-flow"> Flow </span>
+            <div class="logo-tagline"> Nutrição ° Performance ° Equilíbrio </div>
+        </div>
+
+        <div class="benefits">
+            <div class="benefit">     
+                <span class="benefit-icon">
+                    <i class="fa-solid"> 📋</i> 
+                </span> 
+                Planos Alimentares Personalizados 
+            </div>
+
+            <div class="benefit"> 
+                <span class="benefit-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </span>                
+                Acompanhamento de Evolução 
+            </div>
+
+            <div class="benefit"> 
+                <span class="benefit-icon">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                Dados Protegidos 
+            </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div class="card">
+            <div class="card-logo">
+                <img src="../assents/images/NutriFlow.png" alt="NutriFlow">
+            </div>
+
+            <span class="tipo-label"> Entre como: </span>
+
+            <div class="tipo-btns">
+                <div class="tipo-btn active" onclick="setTipo('nutricionista', this)">
+                    <span> <strong> Nutricionista </strong> </span>
+                </div>
+
+                <div class="tipo-btn" onclick="setTipo('paciente', this)">
+                    <span> <strong> Paciente </strong> </span>
+                </div>
+            </div>
+        
+            <div class="form-group">
+                <label> E-mail </label>
+                <input class="form-control" type="email" id="email" placeholder="seu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label> Senha </label>
+                <input class="form-control" type="password" id="senha" placeholder="*********">
+            </div>
+
+            <button class="btn" id="btn-login" onclick="login()"> Enter </button>
+
+            <div class="result" id="result">
+                Não possui uma conta?
+                <a href="/cadastro"> Cadastra-se </a>
+            </div>
+        </div>
+    </div>   
+    <script>
+
+        let tipoSelecionado = 'nutricionista'
+
+        function setTipo(tipo, btn){
+            tipoSelecionado = tipo
+            document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'))
+            btn.classList.add('active')
+        }
+
+        function mostrarResultado(tipo, msg){
+            const el = document.getElementById('result')
+            
+            el.className = 'result' + tipo
+            el.innerHTML = msg
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value.trim()
+            const senha = document.getElementById('senha').value.trim()
+
+            if(!email){
+                mostrarResultado('error', 'Preencha o Email')
+                return;
+            }
+
+            if(!senha){
+                mostrarResultado('error', 'Preecha a Senha')
+                return;
+            }
+
+            const btn = document.getElementById('btn-login')
+            btn.disabled = true
+            btn.textContent = 'Entrando...'
+            mostrarResultado('loading', 'Verificando...')
+
+            try{
+                const res = await fetch('/api/auth/login',{
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, senha})
+                })
+
+                const data = await res.json()
+
+                if(res.ok){
+                    localStorage.setItem('token', data.token)
+                    localStorage.setItem('usuario', JSON.stringify(data.usuario))
+
+                    if(data.usuario.primeiroAcesso){
+                        mostrarResultado('warning', 'Primeiro Acesso ! Altere a Senha.')
+                        window.location.href = '/dashboard'
+                        return
+                    }
+
+                    mostrarResultado('success', 'Login Realizado !')
+
+                    setTimeout(() => {
+                        if(data.usuario.tipo === 'nutricionista'){
+                            window.location.href = '/dashboard'
+                        }else{
+                            window.location.href = '/dashboard'
+                        }
+                    }, 1000)
+                }else{
+                    mostrarResultado('error', (data.erro || 'E-mail ou senha incorretos'))
+                    btn.disabled = false
+                    btn.textContent = 'Enter'
+                }
+            }catch{
+                mostrarResultado('error', 'Erro de Conexão !')
+                btn.disabled = false
+                btn.textContent = 'Enter'
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') login()
+            })
+
+            window.onload = () => {
+                const token = localStorage.getItem('token')
+                if(token) window.location.href = '/dashboard'
+            }
+        }
+    </script>
+</body>
+</html>

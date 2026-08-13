@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> NutriFlow </title>
+</head>
+<body>
+
+    <div id="modalSenha" class="modal">
+        <div class="modal-content">
+            <h2> Primeiro Acesso </h2>
+
+            <p> Por segurança, defina uma nova senha. </p>
+
+            <input type="password" id="novaSenha" placeholder="Senha Nova">
+            <input type="password" id="confirmarSenha" placeholder="Confirmar Senha">
+
+            <button onclick="alterarSenha()"> Salvar </button>
+        </div>
+    </div>
+    <script>
+        function abirModalTrocarSenha(){
+            document.getElementById("modalSenha").style.display = "flex";
+        }
+
+        async function alterarSenha() {
+            const senha = document.getElementById("novaSenha").value;
+            const confirmar = document.getElementById("confirmarSenha").value;
+
+            if(senha !== confirmar){
+                alert("As senha não coicidem")
+                return;
+            }
+
+            const token = localStorage.getItem("token");
+
+            const resposta = await fetch("/api/auth/alterar-senha",{
+                method: "PUT",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":"Bearer" + token
+                },
+                body:JSON.stringify({
+                    senha
+                })
+            })
+
+            if(resposta.ok){
+                alert("Senha alterada com sucesso");
+                window.location.href="/dashboard";
+            }else{
+                alert("Erro ao alterar a Senha");
+            }
+        }
+    </script>
+</body>
+</html>

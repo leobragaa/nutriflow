@@ -3,7 +3,7 @@ const router = express.Router()
 const { cadastrar, listar, buscarPorId, editar, excluir } = require('../controllers/UsuarioController')
 const authMiddleware = require('../middleware/AuthMiddleware')
 
-router.post('/', authMiddleware, cadastrar)
+router.post('/', cadastrar)
 router.get('/', authMiddleware, listar)
 router.get('/:id', authMiddleware, buscarPorId)
 router.put('/:id', authMiddleware, editar)

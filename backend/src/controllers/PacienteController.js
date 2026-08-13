@@ -7,8 +7,15 @@ const cadastrar = async(req, res) =>{
     try{
         const {peso, altura, dataNasc, objetivo, alergias, patologias, usuarioId} = req.body
 
-        const nutricionistaId = req.usuario.id
+        const nutricionista = await prisma.nutricionista.findUnique({
+            where: {
+                usuarioId: req.usuario.id
+            }
+        })
 
+        if (!nutricionista) {
+            return res.status(404).json({ erro: 'Nutricionista logado não encontrado no sistema.' })
+        }
         const paciente = await prisma.paciente.create({
             data:{
                 peso,
@@ -18,13 +25,14 @@ const cadastrar = async(req, res) =>{
                 alergias,
                 patologias,
                 usuarioId,
-                nutricionistaId
+                nutricionistaId: nutricionista.id
             } 
         })
 
-        if(paciente){
-            return res.status(400).json({erro: 'Paciente Cadastrado'})
-        }
+        return res.status(201).json({
+            messagem: 'Paciente Cadastrado com Sucesso',
+            paciente
+        })
 
     }catch(error){
         return res.status(500).json({erro: 'Erro Sistema Interno do servidor', detalhe: error.message})
@@ -32,10 +40,16 @@ const cadastrar = async(req, res) =>{
 }
 const listar = async (req, res) => {
     try{
-        const nutricionistaId = req.usuario.id
+        const nutricionista = await prisma.nutricionista.findUnique({
+            where: {
+                usuarioId: req.usuario.id
+            }
+        })
+        console.log("usuario encontrado:", usuario)
 
+        console.log("nutricionista encontrado:", nutricionista)
         const paciente = await prisma.paciente.findMany({
-            where: {nutricionistaId},
+            where: {nutricionistaId: nutricionista.id},
             include:{
                 usuario:{
                     select: {nome: true, email: true}
@@ -43,7 +57,8 @@ const listar = async (req, res) => {
             }
         })
 
-        return res.status(200).json(pacientes)
+
+        return res.status(200).json(paciente)
     }catch(error){
         return res.status(500).json({erro: 'Erro Interno do Servidor', detalhe: error.message})
     }
@@ -77,7 +92,7 @@ const editar = async (req, res) => {
             where: { id: parseInt(id) },
             data: {peso, altura, dataNasc, objetivo, alergias, patologias}  
         })
-        return res.status(200).json({ mensagem: 'Paciente Atualizado', paciente})
+        return res.status(200).json({ messagem: 'Paciente Atualizado', paciente})
     }catch(error){
         return res.status(500).json({ erro: 'Erro interno do servidor', detalhe: error.message})
     }
@@ -88,9 +103,9 @@ const excluir = async (req, res) => {
         
         await prisma.paciente.delete({ where: { id: parseInt(id)} })
 
-        return res.status(200).json({ mensagem: 'Paciente Excluido'})
+        return res.status(200).json({ messagem: 'Paciente Excluido'})
     }catch(error){
-        return res.status(500).json({ erro: 'Erro interno do servidor', detalhe: error.mensage})
+        return res.status(500).json({ erro: 'Erro interno do servidor', detalhe: error.message})
     }
 }
 

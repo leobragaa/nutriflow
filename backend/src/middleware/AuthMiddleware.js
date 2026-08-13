@@ -4,17 +4,21 @@ const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization
 
     if(!authHeader){
-        return res.status(404).json({erro: 'Tokwn não fornecido'})
+        return res.status(401).json({erro: 'Token não fornecido'})
     }
 
-    const token = authHeader.split(' ')[1]
+    const parts = authHeader.split(' ')
+    if(parts.length !== 2 || parts[0] !== 'Bearer'){
+        return res.status(401).json({ erro: 'Erro no formato token'})
+    }
+    const token = parts[1]
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         req.usuario = decoded
-        next()
+        return next()
     }catch(error){
-        return res.status(401).json({erro: 'Token Inválido ou experido'})
+        return res.status(401).json({erro: 'Token Inválido ou expirado'})
     }
 }
 
